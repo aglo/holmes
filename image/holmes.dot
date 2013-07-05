@@ -1,0 +1,43 @@
+digraph G{
+    
+    record1 [label = "single record"]
+
+
+    node1 [label = "Syntactic log analysis"];
+
+    node2 [label = "Traffic pattern analysis"];
+
+    node3 [label = "Analytical learning analysis"];
+
+
+
+    redis1 [label = "Blacklist"]
+
+    redis2 [label = "Whitelist"]
+
+    redis3 [label = "Redis Sets, Sets, Sets, triple for emphasize"]
+
+    redis4 [label = "Results"]
+
+
+    
+
+
+    record1 -> node1
+
+    node1 -> redis3 [label = "Not decided\nmap one user's records\ninto one set"]
+    
+    node1 -> redis4 [label = "Match Blacklist or Whitelist"]
+
+    redis3 -> node2
+
+    node2 -> redis1 [label = "Not human"]
+    node2 -> redis2 [label = "Human"]
+    node2 -> redis4
+
+    node2 -> node3
+
+    node3 -> redis1 [label = "Not human"]
+    node3 -> redis2 [label = "Human"]
+    node3 -> redis4
+}
