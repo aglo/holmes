@@ -1,0 +1,3 @@
+[submodule "src/github.com/garyburd/redigo"]
+	path = src/github.com/garyburd/redigo
+	url = https://github.com/garyburd/redigo.git
