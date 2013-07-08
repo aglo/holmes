@@ -1,2 +1,5 @@
 #access log
 ./alog
+bin
+pkg
+data
