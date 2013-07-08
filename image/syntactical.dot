@@ -1,9 +1,0 @@
-digraph G{
-    node1 [label = "check IP blacklist or whitelist"]
-
-    node2 [label = "check user agent: *bot or curl or other rules"]
-
-    node3 [label = "check request for robots.txt"]
-
-    record -> node1 -> node2 -> node3 -> result 
-}

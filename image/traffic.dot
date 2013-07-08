@@ -1,7 +1,0 @@
-digraph G{
-    node1 [label = "Record Set"]
-    node2 [label = "Check request times, rate"]
-    node3 [label = "navigational pattern? \n resources?  \n\n (small link in pages \n which shouldn't be request \n by normal user)"]
-
-    node1 -> node2 -> node3
-}
