@@ -48,7 +48,7 @@ func CloseConn(c redis.Conn) {
 	c.Close()
 }
 
-//ListPush push an item into a list at the end of the list
+// ListPush push an item into a list at the end of the list
 func ListPush(list, item string) {
 	c := ConnectRedis()
 	if c != nil {
@@ -61,8 +61,8 @@ func ListPush(list, item string) {
 	}
 }
 
-//ListPop return the first element of a list,if the list have no element,
-//block forever
+// ListPop return the first element of a list,if the list have no element,
+// block forever
 func ListPop(list string) string {
 	var result string
 	c := ConnectRedis()
@@ -81,10 +81,13 @@ func ListPop(list string) string {
 	return result
 }
 
-//BlockListPop return the first element of a list,when the list we want to
-//pop have no element,block at most timeout seconds
-//input:1)list name type of string; 2)timeout second type of int64
-//output:if success,return a <list,item> pair;else return a <"",""> pair
+// BlockListPop return the first element of a list,when the list we want to
+// pop have no element,block at most timeout seconds
+// input:
+//     1)list name type of string;
+//     2)timeout second type of int64
+// output:
+//     if success,return a <list,item> pair;else return a <"",""> pair
 func BlockListPop(list string, timeout int64) (string, string) {
 	c := ConnectRedis()
 	if c != nil {
@@ -104,10 +107,14 @@ func BlockListPop(list string, timeout int64) (string, string) {
 	return "", ""
 }
 
-//HashSet set a field to value if the field is not exist,or update the value of
-//the field
-//input:1)key which represent the hash table; 2)field; 3)value
-//output:if the field is not exist,return 1,else return 0
+// HashSet set a field to value if the field is not exist,or update the value of
+// the field
+// input:
+//     1)key which represent the hash table;
+//     2)field;
+//     3)value
+// output:
+//     if the field is not exist,return 1,else return 0
 func HashSet(ht string, field string, value string) int64 {
 	var result int64
 	c := ConnectRedis()

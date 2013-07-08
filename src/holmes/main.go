@@ -10,7 +10,7 @@ func main() {
 	go StageLog(c, &holmesConf)
 	go Filter(c)
 	go Export(c, &holmesConf)
-	for i := 0; i < 3; i++ { //waiting all goroutines to finish
+	for i := 0; i < 3; i++ { // waiting all goroutines to finish
 		<-c
 	}
 }
