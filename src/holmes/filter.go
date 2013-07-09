@@ -5,23 +5,25 @@ import (
 )
 
 const (
-	YES = iota
-	NO
+	YES = iota // is a human
+	NO         // is not a human
 	UNKNOWN
 )
 
 func Filter(c chan int) {
 	for {
-		_, accesslogLine := BlockListPop("accesslog", 0)
-		fmt.Println("filter==> ", accesslogLine)
+		_, accesslogLine := BlockListRightPop("accesslog", 0)
+
 		accesslog := GetLog(accesslogLine)
+		fmt.Printf("filter==>%s\n", accesslogLine)
+
 		filterResult := DoFilter(accesslog)
 		if filterResult == YES {
-			ListPush("accesslog_yes", accesslogLine)
+			ListLeftPush("accesslog_yes", accesslogLine)
 		} else if filterResult == NO {
-			ListPush("accesslog_no", accesslogLine)
+			ListLeftPush("accesslog_no", accesslogLine)
 		} else {
-			fmt.Println("UNKNOWN")
+			ListLeftPush("accesslog_unkown", accesslogLine)
 		}
 	}
 	c <- 1
@@ -29,5 +31,17 @@ func Filter(c chan int) {
 }
 
 func DoFilter(accesslog AccessLog) int {
-	return 0
+	return GUIDFilter(accesslog)
+}
+
+func GUIDFilter(accesslog AccessLog) int {
+	if accesslog.GUID == "-" {
+		return NO
+	} else {
+		ListLeftPush("guid", accesslog.GUID)
+		ListLeftPush(accesslog.GUID, "----"+accesslog.Referer)
+		uri := accesslog.LogTimeString() + "==>" + accesslog.RequestURI
+		ListLeftPush(accesslog.GUID, uri)
+		return YES
+	}
 }
