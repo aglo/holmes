@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GOPATH=`pwd`
+export GOPATH=`pwd`
 
 git submodule init
 git submodule update
@@ -11,7 +11,7 @@ go install holmes
 
 if [ -e "data" ]
 then
-:
+    :
 else
     mkdir data
 fi
