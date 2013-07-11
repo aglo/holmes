@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 const (
@@ -11,13 +12,25 @@ const (
 )
 
 func Filter(c chan int) {
+	var accesslogLine string
+	var accesslog AccessLog
+	var filterResult int
+	var i int
 	for {
-		_, accesslogLine := BlockListRightPop("accesslog", 0)
+		_, accesslogLine = BlockListRightPop("accesslog", 5)
+		if accesslogLine == "" {
+			fmt.Printf("%s now list have no log to process,continue to wait others to add log to list\n", time.Now())
+			continue
+		}
 
-		accesslog := GetLog(accesslogLine)
-		fmt.Printf("filter==>%s\n", accesslogLine)
+		accesslog = GetLog(accesslogLine)
+		// fmt.Printf("%dfilter==>%s\n", i, accesslogLine)
+		if i%10000 == 0 {
+			fmt.Printf("%s %d\n", time.Now(), i)
+		}
+		i++
 
-		filterResult := DoFilter(accesslog)
+		filterResult = DoFilter(accesslog)
 		if filterResult == YES {
 			ListLeftPush("accesslog_yes", accesslogLine)
 		} else if filterResult == NO {
@@ -27,11 +40,10 @@ func Filter(c chan int) {
 		}
 	}
 	c <- 1
-
 }
 
 func DoFilter(accesslog AccessLog) int {
-	return GUIDFilter(accesslog)
+	return IPFilter(accesslog)
 }
 
 func GUIDFilter(accesslog AccessLog) int {
@@ -44,4 +56,12 @@ func GUIDFilter(accesslog AccessLog) int {
 		ListLeftPush(accesslog.GUID, uri)
 		return YES
 	}
+}
+
+func IPFilter(accesslog AccessLog) int {
+	SetAdd("ip", accesslog.RemoteAddr)
+	ListLeftPush(accesslog.RemoteAddr, "----"+accesslog.Referer)
+	uri := accesslog.LogTimeString() + "==>" + accesslog.RequestURI
+	ListLeftPush(accesslog.RemoteAddr, uri)
+	return UNKNOWN
 }
