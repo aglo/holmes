@@ -50,15 +50,3 @@ func TestRequestTimeString(t *testing.T) {
 		t.Errorf("%s len: %d", strings, len(strings))
 	}
 }
-
-func TestReadFilenames(t *testing.T) {
-	dirname := "../../test/data/accesslog_test"
-	rFilenames := [3]string{"a.txt", "b", "c.data"}
-	filenames := ReadFilenames(dirname)
-	aFilenames := [3]string{filenames[0], filenames[1], filenames[2]}
-	if rFilenames != aFilenames {
-		for _, filename := range filenames {
-			t.Errorf("%s len: %d", filename, len(filename))
-		}
-	}
-}
