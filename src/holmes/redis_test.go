@@ -14,55 +14,60 @@ func TestListLeftPush(t *testing.T) {
 	list := "list_test"
 	item := "item_test"
 
-	len := ListLen(list)
+	redisConn := NewRedisConn()
+	defer CloseRedisConn(redisConn)
+	len := redisConn.ListLen(list)
 	for i := 0; i < int(len); i++ {
-		ListLeftPop(list)
+		redisConn.ListLeftPop(list)
 	}
 
-	len = ListLeftPush(list, item)
+	len = redisConn.ListLeftPush(list, item)
 	if len != 1 {
 		t.Errorf("push an item int a list failed")
 	}
-	len = ListLeftPush(list, item)
+	len = redisConn.ListLeftPush(list, item)
 	if len != 2 {
 		t.Errorf("push an item int a list failed")
 	}
-	len = ListLeftPush(list, item)
+	len = redisConn.ListLeftPush(list, item)
 	if len != 3 {
 		t.Errorf("push an item int a list failed")
 	}
-	ListLeftPop(list)
-	ListLeftPop(list)
-	ListLeftPop(list)
+	redisConn.ListLeftPop(list)
+	redisConn.ListLeftPop(list)
+	redisConn.ListLeftPop(list)
 }
 
 func TestBlockListRightPop(t *testing.T) {
 	list := "list_test"
 
-	len := ListLen(list)
+	redisConn := NewRedisConn()
+	defer CloseRedisConn(redisConn)
+
+	len := redisConn.ListLen(list)
 	for i := 0; i < int(len); i++ {
-		ListLeftPop(list)
+		redisConn.ListLeftPop(list)
 	}
 
-	ListLeftPush(list, "a")
-	ListLeftPush(list, "b")
-	ListLeftPush(list, "c")
+	redisConn.ListLeftPush(list, "a")
+	redisConn.ListLeftPush(list, "b")
+	redisConn.ListLeftPush(list, "c")
 
-	resultList, item := BlockListRightPop(list, 1)
+	resultList, item := redisConn.BlockListRightPop(list, 1)
 	if resultList != list {
 		t.Errorf("listname:%s", resultList)
 	} else if item != "a" {
 		t.Errorf("item:%s", item)
 	}
 
-	resultList, item = BlockListRightPop(list, 1)
+	resultList, item = redisConn.BlockListRightPop(list, 1)
 	if resultList != list {
 		t.Errorf("listname:%s", resultList)
 	} else if item != "b" {
 		t.Errorf("failed")
 	}
 
-	resultList, item = BlockListRightPop(list, 1)
+	resultList, item = redisConn.BlockListRightPop(list, 1)
 	if resultList != list {
 		t.Errorf("listname:%s", resultList)
 	} else if item != "c" {

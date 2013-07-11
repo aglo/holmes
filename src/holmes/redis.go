@@ -17,6 +17,20 @@ type RedisConf struct {
 
 var redisConf RedisConf
 
+type RedisConn struct {
+	c redis.Conn
+}
+
+func NewRedisConn() RedisConn {
+	var redisConn RedisConn
+	redisConn.c = ConnectRedis()
+	return redisConn
+}
+
+func CloseRedisConn(redisConn RedisConn) {
+	CloseConn(redisConn.c)
+}
+
 func InitRedisConf(holmesConfig *HolmesConfig) {
 	redisConf.Network = holmesConfig.RedisNet
 	redisConf.Address = holmesConfig.RedisIP + ":" + holmesConfig.RedisPort
@@ -50,12 +64,10 @@ func CloseConn(c redis.Conn) {
 
 // ListLen return the lenght of a list
 // output:the lenght of list
-func ListLen(list string) int64 {
+func (redisConn *RedisConn) ListLen(list string) int64 {
 	var result int64
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("LLEN", list)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("LLEN", list)
 		if err != nil {
 			panic(err)
 		}
@@ -66,12 +78,10 @@ func ListLen(list string) int64 {
 
 // ListLeftPush push an item into a list at the left side of the list
 // output:the lenght of list after push this item
-func ListLeftPush(list, item string) int64 {
+func (redisConn *RedisConn) ListLeftPush(list, item string) int64 {
 	var result int64
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("LPUSH", list, item)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("LPUSH", list, item)
 		if err != nil {
 			panic(err)
 		}
@@ -82,12 +92,10 @@ func ListLeftPush(list, item string) int64 {
 
 // ListRightPush push an item into a list at the right side of the list
 // output:the lenght of list after push this item
-func ListRightPush(list, item string) int64 {
+func (redisConn *RedisConn) ListRightPush(list, item string) int64 {
 	var result int64
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("RPUSH", list, item)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("RPUSH", list, item)
 		if err != nil {
 			panic(err)
 		}
@@ -98,12 +106,10 @@ func ListRightPush(list, item string) int64 {
 
 // ListLeftPop return the most left side element of a list
 // output:if list a items return the most left side element,else,return null string
-func ListLeftPop(list string) string {
+func (redisConn *RedisConn) ListLeftPop(list string) string {
 	var result string
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("LPOP", list)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("LPOP", list)
 		if err != nil {
 			panic(err)
 		}
@@ -118,12 +124,10 @@ func ListLeftPop(list string) string {
 
 // ListRightPop return the most right side element of a list
 // output:if list a items return the most right side element,else,return null string
-func ListRightPop(list string) string {
+func (redisConn *RedisConn) ListRightPop(list string) string {
 	var result string
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("RPOP", list)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("RPOP", list)
 		if err != nil {
 			panic(err)
 		}
@@ -143,11 +147,9 @@ func ListRightPop(list string) string {
 //     2)timeout second type of int64
 // output:
 //     if success,return a <list,item> pair;else return a <"",""> pair
-func BlockListLeftPop(list string, timeout int64) (string, string) {
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("BLPOP", list, timeout)
+func (redisConn *RedisConn) BlockListLeftPop(list string, timeout int64) (string, string) {
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("BLPOP", list, timeout)
 		if err != nil {
 			panic(err)
 		}
@@ -171,11 +173,9 @@ func BlockListLeftPop(list string, timeout int64) (string, string) {
 //     2)timeout second type of int64
 // output:
 //     if success,return a <list,item> pair;else return a <"",""> pair
-func BlockListRightPop(list string, timeout int64) (string, string) {
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("BRPOP", list, timeout)
+func (redisConn *RedisConn) BlockListRightPop(list string, timeout int64) (string, string) {
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("BRPOP", list, timeout)
 		if err != nil {
 			panic(err)
 		}
@@ -200,12 +200,10 @@ func BlockListRightPop(list string, timeout int64) (string, string) {
 //     3)value
 // output:
 //     if the field is not exist,return 1,else return 0
-func HashSet(ht string, field string, value string) int64 {
+func (redisConn *RedisConn) HashSet(ht string, field string, value string) int64 {
 	var result int64
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("HSET", ht, field, value)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("HSET", ht, field, value)
 		if err != nil {
 			panic(err)
 		}
@@ -214,12 +212,10 @@ func HashSet(ht string, field string, value string) int64 {
 	return result
 }
 
-func HashGet(ht string, field string) string {
+func (redisConn *RedisConn) HashGet(ht string, field string) string {
 	var result string
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("HGET", ht, field)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("HGET", ht, field)
 		if err != nil {
 			panic(err)
 		}
@@ -228,12 +224,10 @@ func HashGet(ht string, field string) string {
 	return result
 }
 
-func HashIncrby(ht string, field string, increment int) int64 {
+func (redisConn *RedisConn) HashIncrby(ht string, field string, increment int) int64 {
 	var result int64
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("HINCRBY", ht, field, increment)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("HINCRBY", ht, field, increment)
 		if err != nil {
 			panic(err)
 		}
@@ -242,12 +236,10 @@ func HashIncrby(ht string, field string, increment int) int64 {
 	return result
 }
 
-func SetAdd(set string, member string) int64 {
+func (redisConn *RedisConn) SetAdd(set string, member string) int64 {
 	var result int64
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("SADD", set, member)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("SADD", set, member)
 		if err != nil {
 			panic(err)
 		}
@@ -256,12 +248,10 @@ func SetAdd(set string, member string) int64 {
 	return result
 }
 
-func SetIsMember(set string, member string) int64 {
+func (redisConn *RedisConn) SetIsMember(set string, member string) int64 {
 	var result int64
-	c := ConnectRedis()
-	if c != nil {
-		defer CloseConn(c)
-		r, err := c.Do("SISMEMBER", set, member)
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("SISMEMBER", set, member)
 		if err != nil {
 			panic(err)
 		}
