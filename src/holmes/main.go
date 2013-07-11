@@ -6,7 +6,7 @@ func main() {
 	confFile := "holmes.conf"
 	holmesConf = LoadConfig(confFile)
 	InitRedisConf(&holmesConf)
-	c := make(chan int, 1)
+	c := make(chan int, 3)
 	go StageLog(c, &holmesConf)
 	go Filter(c)
 	go Export(c, &holmesConf)

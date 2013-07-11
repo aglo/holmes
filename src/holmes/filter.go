@@ -32,7 +32,7 @@ func Filter(c chan int) {
 		}
 		i++
 
-		filterResult = DoFilter(accesslog)
+		filterResult = DoFilter(redisConn, accesslog)
 		if filterResult == YES {
 			redisConn.ListLeftPush("accesslog_yes", accesslogLine)
 		} else if filterResult == NO {
@@ -44,27 +44,35 @@ func Filter(c chan int) {
 	c <- 1
 }
 
-func DoFilter(accesslog AccessLog) int {
-	//return IPFilter(accesslog)
-	return YES
+func DoFilter(redisConn RedisConn, accesslog AccessLog) int {
+	FilterFlag := UNKNOWN
+	switch {
+	case (UNKNOWN == GUIDFilter(redisConn, accesslog)):
+		return FilterFlag
+	case (UNKNOWN == IPFilter(redisConn, accesslog)):
+		return FilterFlag
+	}
+	////FilterFlag = GUIDFilter(accesslog)
+	//FilterFlag = IPFilter(accesslog)
+	return FilterFlag
 }
 
-/*func GUIDFilter(accesslog AccessLog) int {
+func GUIDFilter(redisConn RedisConn, accesslog AccessLog) int {
 	if accesslog.GUID == "-" {
 		return NO
 	} else {
-		ListLeftPush("guid", accesslog.GUID)
-		ListLeftPush(accesslog.GUID, "----"+accesslog.Referer)
+		redisConn.ListLeftPush("guid", accesslog.GUID)
+		redisConn.ListLeftPush(accesslog.GUID, "----"+accesslog.Referer)
 		uri := accesslog.LogTimeString() + "==>" + accesslog.RequestURI
-		ListLeftPush(accesslog.GUID, uri)
+		redisConn.ListLeftPush(accesslog.GUID, uri)
 		return YES
 	}
 }
 
-func IPFilter(accesslog AccessLog) int {
-	SetAdd("ip", accesslog.RemoteAddr)
-	ListLeftPush(accesslog.RemoteAddr, "----"+accesslog.Referer)
+func IPFilter(redisConn RedisConn, accesslog AccessLog) int {
+	redisConn.SetAdd("ip", accesslog.RemoteAddr)
+	redisConn.ListLeftPush(accesslog.RemoteAddr, "----"+accesslog.Referer)
 	uri := accesslog.LogTimeString() + "==>" + accesslog.RequestURI
-	ListLeftPush(accesslog.RemoteAddr, uri)
+	redisConn.ListLeftPush(accesslog.RemoteAddr, uri)
 	return UNKNOWN
-}*/
+}

@@ -83,6 +83,7 @@ func (redisConn *RedisConn) ListLeftPush(list, item string) int64 {
 	if redisConn.c != nil {
 		r, err := redisConn.c.Do("LPUSH", list, item)
 		if err != nil {
+			fmt.Println("error")
 			panic(err)
 		}
 		result = r.(int64)
