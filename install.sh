@@ -2,6 +2,14 @@
 
 export GOPATH=`pwd`
 
+if [ -e "data" ]
+then
+    :
+else
+    mkdir -p data/in_log
+    mkdir -p data/out_log
+fi
+
 git submodule init
 git submodule update
 
@@ -9,10 +17,4 @@ git submodule update
 go test holmes
 go install holmes
 
-if [ -e "data" ]
-then
-    :
-else
-    mkdir data
-fi
 cp conf/holmes.conf bin

@@ -16,8 +16,8 @@ type HolmesConfig struct {
 	ReadTimeout    int64
 	WriteTimeout   int64
 	BlockTimeout   int64
-	Infilepath     string
-	Outfilepath    string
+	InLogDir       string
+	OutLogDir      string
 }
 
 func LoadConfig(configPath string) HolmesConfig {
