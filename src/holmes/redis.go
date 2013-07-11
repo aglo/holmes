@@ -151,13 +151,15 @@ func BlockListLeftPop(list string, timeout int64) (string, string) {
 		if err != nil {
 			panic(err)
 		}
-		v, err := redis.Values(r, err)
-		if err != nil {
-			panic(err)
+		if r != nil {
+			v, err := redis.Values(r, err)
+			if err != nil {
+				panic(err)
+			}
+			listname := string(v[0].([]uint8))
+			item := string(v[1].([]uint8))
+			return listname, item
 		}
-		listname := string(v[0].([]uint8))
-		item := string(v[1].([]uint8))
-		return listname, item
 	}
 	return "", ""
 }
@@ -177,13 +179,15 @@ func BlockListRightPop(list string, timeout int64) (string, string) {
 		if err != nil {
 			panic(err)
 		}
-		v, err := redis.Values(r, err)
-		if err != nil {
-			panic(err)
+		if r != nil {
+			v, err := redis.Values(r, err)
+			if err != nil {
+				panic(err)
+			}
+			listname := string(v[0].([]uint8))
+			item := string(v[1].([]uint8))
+			return listname, item
 		}
-		listname := string(v[0].([]uint8))
-		item := string(v[1].([]uint8))
-		return listname, item
 	}
 	return "", ""
 }
