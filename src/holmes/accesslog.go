@@ -89,6 +89,18 @@ func ReadLogLines(filename string) []string {
 	return lines
 }
 
+func ReadFilenames(dirname string) []string {
+	filenames := []string{}
+	fileInfos, err := ioutil.ReadDir(dirname)
+	if err != nil {
+		panic(err)
+	}
+	for _, fileInfo := range fileInfos {
+		filenames = append(filenames, fileInfo.Name())
+	}
+	return filenames
+}
+
 func GetLog(line string) AccessLog {
 	var accessLog AccessLog
 	if line != "" {
