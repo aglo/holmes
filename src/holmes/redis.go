@@ -249,6 +249,8 @@ func (redisConn *RedisConn) SetAdd(set string, member string) int64 {
 	return result
 }
 
+// SetIsMember determine if a member is belong to a set
+// if true,return 1,else return 0
 func (redisConn *RedisConn) SetIsMember(set string, member string) int64 {
 	var result int64
 	if redisConn.c != nil {
