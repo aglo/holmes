@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -46,12 +47,7 @@ func Filter(c chan int) {
 
 func DoFilter(redisConn RedisConn, accesslog AccessLog) int {
 	FilterFlag := UNKNOWN
-	switch {
-	case (UNKNOWN == GUIDFilter(redisConn, accesslog)):
-		return FilterFlag
-	case (UNKNOWN == IPFilter(redisConn, accesslog)):
-		return FilterFlag
-	}
+	FilterFlag = UserAgentFilter(redisConn, accesslog)
 	////FilterFlag = GUIDFilter(accesslog)
 	//FilterFlag = IPFilter(accesslog)
 	return FilterFlag
@@ -75,4 +71,21 @@ func IPFilter(redisConn RedisConn, accesslog AccessLog) int {
 	uri := accesslog.LogTimeString() + "==>" + accesslog.RequestURI
 	redisConn.ListLeftPush(accesslog.RemoteAddr, uri)
 	return UNKNOWN
+}
+
+func UserAgentFilter(redisConn RedisConn, accesslog AccessLog) int {
+	if accesslog.UserAgent == "-" {
+		return NO
+	} else {
+		uaFamily := Parse(accesslog.UserAgent)
+		if uaFamily == "" {
+			return NO
+		}
+		uaFamily = strings.ToLower(uaFamily)
+		if strings.Contains(uaFamily, "bot") {
+			return NO
+		}
+		redisConn.SetAdd("ua", uaFamily)
+		return YES
+	}
 }
