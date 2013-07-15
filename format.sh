@@ -1,1 +1,1 @@
-go fmt src/holmes/*
+go fmt src/holmes/*.go
