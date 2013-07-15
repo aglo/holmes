@@ -16,7 +16,7 @@ func main() {
 	holmesConf = LoadConfig(confFile)
 	InitRedisConf(&holmesConf)
 	InitUAParsers(ua_pattern_file)
-	
+
 	c := make(chan int, 3)
 	go StageLog(c, &holmesConf)
 	go Filter(c)
