@@ -225,6 +225,18 @@ func (redisConn *RedisConn) HashGet(ht string, field string) string {
 	return result
 }
 
+func (redisConn *RedisConn) HashDel(ht string, field string) int64 {
+	var result int64
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("HDEL", ht, field)
+		if err != nil {
+			panic(err)
+		}
+		result = r.(int64)
+	}
+	return result
+}
+
 func (redisConn *RedisConn) HashIncrby(ht string, field string, increment int) int64 {
 	var result int64
 	if redisConn.c != nil {
