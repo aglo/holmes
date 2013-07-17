@@ -57,6 +57,9 @@ func DoFilter(redisConn RedisConn, accesslog AccessLog) int {
 }
 
 func URIFilter(redisConn RedisConn, accesslog AccessLog) int {
+	if strings.Contains(accesslog.Hostname, "s.anjuke.com") {
+		redisConn.SetAdd("s.anjuke.com", accesslog.RemoteAddr)
+	}
 	if matched, err := regexp.MatchString("^/prop/view", accesslog.RequestURI); err == nil && matched {
 		return HttpCodeFilter(redisConn, accesslog)
 	} else {
@@ -84,6 +87,13 @@ func UserAgentFilter(redisConn RedisConn, accesslog AccessLog) int {
 		uaFamily = strings.ToLower(uaFamily)
 		if strings.Contains(uaFamily, "bot") {
 			return NO
+		}
+		if accesslog.Referer == "-" || accesslog.GUID == "-" || strings.Contains(accesslog.Referer, "my.anjuke.com") {
+			if redisConn.SetIsMember("s.anjuke.com", accesslog.RemoteAddr) == 1 {
+				return YES
+			} else {
+				return NO
+			}
 		}
 		redisConn.SetAdd("ua", uaFamily)
 		return YES
