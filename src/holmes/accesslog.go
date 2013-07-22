@@ -210,29 +210,34 @@ func GetLogNginx(line string) AccessLog {
 	var accessLog AccessLog
 	if line != "" {
 		fields := myRegexp.FindSubmatch([]byte(line))
-		accessLog.Hour = string(fields[10])
-		accessLog.Year = string(fields[9])
-		accessLog.Day = string(fields[7])
-		accessLog.Min = string(fields[11])
-		accessLog.RequestTime = string(fields[0])
-		accessLog.UpstreamResponseTime = string(fields[1])
-		accessLog.RemoteAddr = string(fields[2])
-		accessLog.UpstreamAddr = string(fields[4])
-		accessLog.Hostname = string(fields[13])
-		accessLog.Method = string(fields[14])
-		accessLog.RequestURI = string(fields[15])
-		accessLog.HttpCode = string(fields[16])
-		accessLog.BytesSent = string(fields[17])
-		accessLog.Referer = string(fields[18])
-		accessLog.UserAgent = string(fields[19])
-		accessLog.GzipRatio = string(fields[20])
-		accessLog.HttpXForwardedFor = string(fields[21])
-		accessLog.ServerAddr = string(fields[23])
-		accessLog.GUID = string(fields[26])
-		accessLog.Sec = string(fields[12])
-		accessLog.Month = monthMap[string(fields[8])]
-		accessLog.RequestLen = string(fields[3])
-		accessLog.ServerPort = string(fields[25])
+		//for i, d := range fields {
+		//fmt.Println(i, ":", d)
+		//}
+		//fmt.Println(string(fields[0]))
+		accessLog.Hour = string(fields[11])
+		accessLog.Year = string(fields[10])
+		accessLog.Day = string(fields[8])
+
+		accessLog.Min = string(fields[12])
+		accessLog.RequestTime = string(fields[1])
+		accessLog.UpstreamResponseTime = string(fields[2])
+		accessLog.RemoteAddr = string(fields[3])
+		accessLog.UpstreamAddr = string(fields[5])
+		accessLog.Hostname = string(fields[14])
+		accessLog.Method = string(fields[15])
+		accessLog.RequestURI = string(fields[16])
+		accessLog.HttpCode = string(fields[17])
+		accessLog.BytesSent = string(fields[18])
+		accessLog.Referer = string(fields[19])
+		accessLog.UserAgent = string(fields[20])
+		accessLog.GzipRatio = string(fields[21])
+		accessLog.HttpXForwardedFor = string(fields[22])
+		accessLog.ServerAddr = string(fields[24])
+		accessLog.GUID = string(fields[27])
+		accessLog.Sec = string(fields[13])
+		accessLog.Month = monthMap[string(fields[9])]
+		accessLog.RequestLen = string(fields[4])
+		accessLog.ServerPort = string(fields[26])
 	}
 	return accessLog
 }
