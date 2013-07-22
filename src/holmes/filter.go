@@ -29,9 +29,9 @@ func Filter(c chan int) {
 			continue
 		}
 
-		accesslog = GetLog(accesslogLine)
+		accesslog = GetLogNginx(accesslogLine)
 		// fmt.Printf("%dfilter==>%s\n", i, accesslogLine)
-		if i%10000 == 0 {
+		if i%100000 == 0 {
 			fmt.Printf("%s %d\n", time.Now(), i)
 		}
 		i++
@@ -41,7 +41,10 @@ func Filter(c chan int) {
 		//  these should done in filter function
 		//
 		if filterResult == YES {
-			redisConn.ListLeftPush("accesslog_yes", accesslogLine)
+			logTimeMin := accesslog.LogTimeMinString()
+			redisConn.HashIncrby("accesslog_result_time", logTimeMin, 1)
+			redisConn.HashIncrby("accesslog_result", "effective_pv", 1)
+			//redisConn.ListLeftPush("accesslog_yes", accesslogLine)
 		}
 		//else if filterResult == NO {
 		//	redisConn.ListLeftPush("accesslog_no", accesslogLine)
@@ -53,27 +56,7 @@ func Filter(c chan int) {
 }
 
 func DoFilter(redisConn RedisConn, accesslog AccessLog) int {
-	return URIFilter(redisConn, accesslog)
-}
-
-func URIFilter(redisConn RedisConn, accesslog AccessLog) int {
-	if strings.Contains(accesslog.Hostname, "s.anjuke.com") {
-		redisConn.SetAdd("s.anjuke.com", accesslog.RemoteAddr)
-	}
-	if matched, err := regexp.MatchString("^/prop/view", accesslog.RequestURI); err == nil && matched {
-		return HttpCodeFilter(redisConn, accesslog)
-	} else {
-		//TODO Analysis(redisConn,accesslog)
-		return UNKNOWN
-	}
-}
-
-func HttpCodeFilter(redisConn RedisConn, accesslog AccessLog) int {
-	if matched, err := regexp.MatchString("^2", accesslog.HttpCode); err == nil && matched {
-		return UserAgentFilter(redisConn, accesslog)
-	} else {
-		return UNKNOWN
-	}
+	return UserAgentFilter(redisConn, accesslog)
 }
 
 func UserAgentFilter(redisConn RedisConn, accesslog AccessLog) int {
@@ -83,20 +66,59 @@ func UserAgentFilter(redisConn RedisConn, accesslog AccessLog) int {
 		uaFamily := Parse(accesslog.UserAgent)
 		if uaFamily == "" {
 			return NO
-		}
-		uaFamily = strings.ToLower(uaFamily)
-		if strings.Contains(uaFamily, "bot") {
-			return NO
-		}
-		if accesslog.Referer == "-" || accesslog.GUID == "-" || strings.Contains(accesslog.Referer, "my.anjuke.com") {
-			if redisConn.SetIsMember("s.anjuke.com", accesslog.RemoteAddr) == 1 {
-				return YES
-			} else {
+		} else {
+			uaFamily = strings.ToLower(uaFamily)
+			if strings.Contains(uaFamily, "bot") {
 				return NO
+			} else {
+				redisConn.SetAdd("ua", uaFamily)
+				return URIFilter(redisConn, accesslog)
 			}
 		}
-		redisConn.SetAdd("ua", uaFamily)
+	}
+}
+
+func URIFilter(redisConn RedisConn, accesslog AccessLog) int {
+	redisConn.SetAdd(accesslog.RemoteAddr, accesslog.RequestURI) // record all logs of each ip
+	if strings.Contains(accesslog.Hostname, "s.anjuke.com") {
+		redisConn.SetAdd("s.anjuke.com", accesslog.RemoteAddr)
+	}
+	if matched, err := regexp.MatchString("^/prop/view/", accesslog.RequestURI); err == nil && matched {
+		redisConn.HashIncrby("accesslog_result", "total_pv", 1)
+		return HttpCodeFilter(redisConn, accesslog)
+	} else {
+		//TODO Analysis(redisConn,accesslog)
+		return UNKNOWN
+	}
+}
+
+func HttpCodeFilter(redisConn RedisConn, accesslog AccessLog) int {
+	if matched, err := regexp.MatchString("^2", accesslog.HttpCode); err == nil && matched {
+		redisConn.HashIncrby("accesslog_result", accesslog.HttpCode, 1)
+		return RefererFilter(redisConn, accesslog)
+		//return YES
+	} else {
+		redisConn.HashIncrby("accesslog_result", accesslog.HttpCode, 1)
+		//log.Printf("http code: %s", accesslog.HttpCode)
+		return UNKNOWN
+	}
+}
+
+func RefererFilter(redisConn RedisConn, accesslog AccessLog) int {
+	if accesslog.Referer == "-" && accesslog.GUID == "-" {
+		return NO
+	}
+	if accesslog.Referer == "-" && accesslog.GUID != "-" {
+		if redisConn.SetIsMember("s.anjuke.com", accesslog.RemoteAddr) == 1 {
+			return YES
+		} else {
+			return NO
+		}
+	}
+	if redisConn.SetIsMember(accesslog.RemoteAddr, accesslog.Referer) == 1 {
 		return YES
+	} else {
+		return NO
 	}
 
 	//////////// get UA type from website
