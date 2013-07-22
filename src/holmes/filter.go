@@ -80,6 +80,9 @@ func UserAgentFilter(redisConn RedisConn, accesslog AccessLog) int {
 
 func URIFilter(redisConn RedisConn, accesslog AccessLog) int {
 	redisConn.SetAdd(accesslog.RemoteAddr, accesslog.RequestURI) // record all logs of each ip
+	if strings.Contains(accesslog.Hostname, "s.anjuke.com") {
+		redisConn.SetAdd("s.anjuke.com", accesslog.RemoteAddr)
+	}
 	if matched, err := regexp.MatchString("^/prop/view/", accesslog.RequestURI); err == nil && matched {
 		redisConn.HashIncrby("accesslog_result", "total_pv", 1)
 		return HttpCodeFilter(redisConn, accesslog)
@@ -90,12 +93,13 @@ func URIFilter(redisConn RedisConn, accesslog AccessLog) int {
 }
 
 func HttpCodeFilter(redisConn RedisConn, accesslog AccessLog) int {
-	redisConn.HashIncrby("accesslog_result", accesslog.HttpCode, 1)
-
 	if matched, err := regexp.MatchString("^2", accesslog.HttpCode); err == nil && matched {
-		return WhiteIpFilter(redisConn, accesslog)
+		redisConn.HashIncrby("accesslog_result", accesslog.HttpCode, 1)
+		return RefererFilter(redisConn, accesslog)
 		//return YES
 	} else {
+		redisConn.HashIncrby("accesslog_result", accesslog.HttpCode, 1)
+		//log.Printf("http code: %s", accesslog.HttpCode)
 		return UNKNOWN
 	}
 }
@@ -169,26 +173,7 @@ func AddIgnoreList(redisConn RedisConn, accesslog AccessLog) {
 }
 
 func Analysis(redisConn RedisConn, accesslog AccessLog) {
-	if strings.Contains(accesslog.Hostname, "s.anjuke.com") {
-		AddWhiteList(redisConn, accesslog)
-		ProcessWatchingList(redisConn, accesslog)
-	}
-}
 
-func ProcessWatchingList(redisConn RedisConn, accesslog AccessLog) {
-	listLen := redisConn.ListLen("WL_" + accesslog.RemoteAddr)
-	for i := 0; i < int(listLen); i++ {
-		line := redisConn.ListLeftPop("WL_" + accesslog.RemoteAddr)
-		watchAccesslog := GetLog(line)
-		if matched, err := regexp.MatchString("^/prop/view/", watchAccesslog.RequestURI); err == nil && matched {
-			if matched, err := regexp.MatchString("^2", watchAccesslog.HttpCode); err == nil && matched {
-				logTimeMin := watchAccesslog.LogTimeMinString()
-				redisConn.HashIncrby("accesslog_result_time", logTimeMin, 1)
-				redisConn.HashIncrby("accesslog_result", "effective_pv", 1)
-			}
-		}
-	}
-	DelWatchingList(redisConn, accesslog)
 }
 
 //func GUIDFilter(redisConn RedisConn, accesslog AccessLog) int {
