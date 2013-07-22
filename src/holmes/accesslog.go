@@ -210,10 +210,6 @@ func GetLogNginx(line string) AccessLog {
 	var accessLog AccessLog
 	if line != "" {
 		fields := myRegexp.FindSubmatch([]byte(line))
-		//for i, d := range fields {
-		//fmt.Println(i, ":", d)
-		//}
-		//fmt.Println(string(fields[0]))
 		accessLog.Hour = string(fields[11])
 		accessLog.Year = string(fields[10])
 		accessLog.Day = string(fields[8])
