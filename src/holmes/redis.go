@@ -274,3 +274,27 @@ func (redisConn *RedisConn) SetIsMember(set string, member string) int64 {
 	}
 	return result
 }
+
+func (redisConn *RedisConn) SetRem(set string, member string) int64 {
+	var result int64
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("SREM", set, member)
+		if err != nil {
+			panic(err)
+		}
+		result = r.(int64)
+	}
+	return result
+}
+
+func (redisConn *RedisConn) KeyDel(key string) int64 {
+	var result int64
+	if redisConn.c != nil {
+		r, err := redisConn.c.Do("DEL", key)
+		if err != nil {
+			panic(err)
+		}
+		result = r.(int64)
+	}
+	return result
+}

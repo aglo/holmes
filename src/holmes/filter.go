@@ -60,7 +60,7 @@ func URIFilter(redisConn RedisConn, accesslog AccessLog) int {
 	if matched, err := regexp.MatchString("^/prop/view", accesslog.RequestURI); err == nil && matched {
 		return HttpCodeFilter(redisConn, accesslog)
 	} else {
-		//TODO Analysis(redisConn,accesslog)
+		Analysis(redisConn, accesslog)
 		return UNKNOWN
 	}
 }
@@ -114,31 +114,34 @@ func UserAgentFilter(redisConn RedisConn, accesslog AccessLog) int {
 }
 
 func WhiteIpFilter(redisConn RedisConn, accesslog AccessLog) int {
-	if true {
-		//TODO if accesslog . RemoteAddr == (check whether in the whitelist)
-
+	if 1 == redisConn.SetIsMember("WhiteList", accesslog.RemoteAddr) {
 		return YES
 	} else {
+		AddWatchingList(redisConn, accesslog)
 		return UNKNOWN
 	}
 }
 
 func AddWatchingList(redisConn RedisConn, accesslog AccessLog) {
-	redisConn.ListLeftPush("WatchingList", accesslog.String())
+	redisConn.SetAdd("WatchingList", accesslog.RemoteAddr)
+	redisConn.ListLeftPush("WL_"+accesslog.RemoteAddr, accesslog.String())
 }
 
 func DelWatchingList(redisConn RedisConn, accesslog AccessLog) {
-	//redisConn.ListRigthPop("WatchingList", accesslog.String())
-	//
-	//   TODO pop specific record
+	redisConn.SetRem("WatchingList", accesslog.RemoteAddr)
+	redisConn.KeyDel("WL_" + accesslog.RemoteAddr)
 }
 
 func AddWhiteList(redisConn RedisConn, accesslog AccessLog) {
-	redisConn.ListLeftPush("WhiteList", accesslog.String())
+	redisConn.SetAdd("WhiteList", accesslog.RemoteAddr)
 }
 
 func AddIgnoreList(redisConn RedisConn, accesslog AccessLog) {
-	redisConn.ListLeftPush("IgnoreList", accesslog.String())
+	redisConn.SetAdd("IgnoreList", accesslog.RemoteAddr)
+}
+
+func Analysis(redisConn RedisConn, accesslog AccessLog) {
+
 }
 
 //func GUIDFilter(redisConn RedisConn, accesslog AccessLog) int {
