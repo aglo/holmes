@@ -7,6 +7,7 @@ import (
 	//"net/http"
 	"regexp"
 	"time"
+	"log"
 )
 
 const (
@@ -43,6 +44,7 @@ func Filter(c chan int) {
 		//
 		if filterResult == YES {
 			logTimeMin := accesslog.LogTimeMinString()
+			//log.Println("Result of DoFilter() is YES,increment accesslog_result_vppv_per_min at ",logTimeMin)
 			redisConn.HashIncrby("accesslog_result_vppv_per_min", logTimeMin, 1)
 			redisConn.HashIncrby("accesslog_result", "effective_vppv", 1)
 			//redisConn.ListLeftPush("accesslog_yes", accesslogLine)
@@ -77,6 +79,7 @@ func UserAgentFilter(redisConn RedisConn, accesslog AccessLog) int {
 			} else {
 				redisConn.HashIncrby("accesslog_result", "UserAgentFilter_PASS", 1)
 				redisConn.SetAdd("ua", uaFamily)
+				AddRefererList(redisConn, accesslog)
 				return URIFilter(redisConn, accesslog)
 			}
 		}
@@ -84,6 +87,7 @@ func UserAgentFilter(redisConn RedisConn, accesslog AccessLog) int {
 }
 
 func URIFilter(redisConn RedisConn, accesslog AccessLog) int {
+	//
 	//redisConn.SetAdd(accesslog.RemoteAddr, accesslog.RequestURI) // record all logs of each ip
 	if matched, err := regexp.MatchString("^/prop/view/", accesslog.RequestURI); err == nil && matched {
 		redisConn.HashIncrby("accesslog_result", "total_vppv", 1)
@@ -105,7 +109,7 @@ func HttpCodeFilter(redisConn RedisConn, accesslog AccessLog) int {
 }
 
 func RefererFilter(redisConn RedisConn, accesslog AccessLog) int {
-	if accesslog.Referer == "-" && accesslog.GUID == "-" {
+	/*if accesslog.Referer == "-" && accesslog.GUID == "-" {
 		return NO
 	}
 	if accesslog.Referer == "-" && accesslog.GUID != "-" {
@@ -114,11 +118,18 @@ func RefererFilter(redisConn RedisConn, accesslog AccessLog) int {
 		} else {
 			return NO
 		}
-	}
-	if redisConn.SetIsMember(accesslog.RemoteAddr, accesslog.Referer) == 1 {
-		return YES
-	} else {
+	}*/
+	if strings.Contains(accesslog.Referer, "my.anjuke.com") == true {
+		log.Println(accesslog.String(),"is come from my.anjuke.com")
 		return NO
+	} else {
+		if redisConn.SetIsMember("Referer_"+accesslog.RemoteAddr, accesslog.Referer) == 1 {
+			log.Println(accesslog.String(),"is come from ",accesslog.Referer)
+			return YES
+		} else {
+			//log.Println(accesslog.String(),"is not come from ",accesslog.Referer)
+			return NO
+		}
 	}
 
 	//////////// get UA type from website
@@ -154,6 +165,18 @@ func WhiteIpFilter(redisConn RedisConn, accesslog AccessLog) int {
 	}
 }
 
+func AddRefererList(redisConn RedisConn, accesslog AccessLog) {
+	//log.Println("add to Referer_"+accesslog.RemoteAddr, "member:","http://"+accesslog.Hostname+accesslog.RequestURI)
+	redisConn.SetAdd("RefererList", accesslog.RemoteAddr)
+	redisConn.SetAdd("Referer_"+accesslog.RemoteAddr, "http://"+accesslog.Hostname+accesslog.RequestURI)
+}
+
+func DelRefererList(redisConn RedisConn, accesslog AccessLog) {
+	//log.Println("DelRefererList delete member ",accesslog.RemoteAddr," and key Referer_" + accesslog.RemoteAddr)
+	redisConn.SetRem("RefererList", accesslog.RemoteAddr)
+	redisConn.KeyDel("Referer_" + accesslog.RemoteAddr)
+}
+
 func AddWatchingList(redisConn RedisConn, accesslog AccessLog) {
 	redisConn.SetAdd("WatchingList", accesslog.RemoteAddr)
 	redisConn.ListLeftPush("WL_"+accesslog.RemoteAddr, accesslog.String())
@@ -174,25 +197,37 @@ func AddIgnoreList(redisConn RedisConn, accesslog AccessLog) {
 
 func Analysis(redisConn RedisConn, accesslog AccessLog) {
 	if matched, err := regexp.MatchString("^s.anjuke.com", accesslog.Hostname); err == nil && matched {
-		AddWhiteList(redisConn, accesslog)
+		//AddWhiteList(redisConn, accesslog)
+		//log.Println("call Analysis... Hostname is: ",accesslog.Hostname)
 		ProcessWatchingList(redisConn, accesslog)
 	}
 }
 
 func ProcessWatchingList(redisConn RedisConn, accesslog AccessLog) {
+	//log.Println("call ProcessWatchingList... : ",accesslog.String())
+	trustFlag:=false
 	listLen := redisConn.ListLen("WL_" + accesslog.RemoteAddr)
 	for i := 0; i < int(listLen); i++ {
 		line := redisConn.ListLeftPop("WL_" + accesslog.RemoteAddr)
 		watchAccesslog := GetLog(line)
 		if matched, err := regexp.MatchString("^/prop/view/", watchAccesslog.RequestURI); err == nil && matched {
 			if matched, err := regexp.MatchString("^2", watchAccesslog.HttpCode); err == nil && matched {
-				logTimeMin := watchAccesslog.LogTimeMinString()
-				redisConn.HashIncrby("accesslog_result_vppv_per_min", logTimeMin, 1)
-				redisConn.HashIncrby("accesslog_result", "effective_vppv", 1)
+				//if RefererFilter(redisConn, watchAccesslog) == YES {
+				if watchAccesslog.Referer != "-" {
+					trustFlag=true
+					logTimeMin := watchAccesslog.LogTimeMinString()
+					//log.Println("Result of RefererFilter() is YES,increment accesslog_result_vppv_per_min at ",logTimeMin)
+					redisConn.HashIncrby("accesslog_result_vppv_per_min", logTimeMin, 1)
+					redisConn.HashIncrby("accesslog_result", "effective_vppv", 1)
+				}
 			}
 		}
 	}
 	DelWatchingList(redisConn, accesslog)
+	DelRefererList(redisConn, accesslog)
+	if trustFlag{
+		AddWhiteList(redisConn, accesslog)
+	}
 }
 
 //func GUIDFilter(redisConn RedisConn, accesslog AccessLog) int {
