@@ -1,9 +1,9 @@
-
 HOLMES
 ======================================
 --------------------------------------
 ## Section 1: Background
 
+----------
 ### 1.1 Web Traffic
 
 There is Three main **Web Traffic** nowadays.
@@ -34,7 +34,7 @@ As for User, they can classify into two type
  + Complete history
  + More accuracy
 
-### Significant
+### 1.4 Significant
 
 + Accurate effective count (money XD)
 + Forbid competitor robots
@@ -44,7 +44,8 @@ As for User, they can classify into two type
 
 ## Section 2: Input & Output
 
-### 2.1 format
+---------------------------
+### 2.1 Format
 
 Our method is to analyse the **Access Log**.
 
@@ -56,6 +57,7 @@ That means:
 ### 2.2 Example
 
 + single input with many information:
+
  + 23	2013	28	59	103.0	103.0	xxx.xxx.xxx.xxx	xxx.xxx.xxx.xxx	XXX.XXX.com	GET	/abc/def/ghi	200	295	http://abc.def.ghi.com	Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1	0.03	-	xxx.xx.xxx.xxx	-	59	06	1482	80
 + single output with tag:
  + (xxx.xxx.xxx.xxx, human)
@@ -64,6 +66,7 @@ That means:
 
 ## Section 3: How
 
+------------------------------------------
 There is three main method
 
 + Syntactic log analysis
@@ -85,6 +88,7 @@ There is three main method
 
 ## Section 4: Our implement
 
+--------------------------------------------
 + update dot files
 + reason of each rule
 ###4.1 Rules
@@ -101,6 +105,7 @@ In section 4.1.1, a method used to recognize normal web crawlers is described, h
 
 ## Section 5: Result
 
+--------------------------------------------
 + classify tree(total request num   ->    effective click num)
 + compare graph
 + analysis
@@ -109,6 +114,7 @@ In section 4.1.1, a method used to recognize normal web crawlers is described, h
 
 ## Section 6: What is more
 
+---------------------------------------------
 + more rule
 + cluster for high speed
 
