@@ -110,6 +110,9 @@ In section 4.1.1, a method used to recognize normal web crawlers is described, h
 
 --------------------------------------------
 + classify tree(total request num   ->    effective click num)
+
+![](doc/image/CountTree.png)
+
 + compare graph
 + analysis
 
