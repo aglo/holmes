@@ -90,7 +90,7 @@ There is three main method
 
 --------------------------------------------
 
-![](https://github.com/ent-worm/holmes/blob/doc/doc/image/implement.png) 
+![](doc/image/implement.png) 
 
 + update dot files
 + reason of each rule
