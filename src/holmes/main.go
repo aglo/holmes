@@ -18,9 +18,9 @@ func main() {
 	InitUAParsers(ua_pattern_file)
 
 	c := make(chan int, 3)
-	go StageLog(c, &holmesConf)
+	//go StageLog(c, &holmesConf)
 	go Filter(c)
-	go Export(c, &holmesConf)
+	//go Export(c, &holmesConf)
 	for i := 0; i < 3; i++ { // waiting all goroutines to finish
 		<-c
 	}

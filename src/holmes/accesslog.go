@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"regexp"
 	"strings"
 )
 
@@ -78,6 +79,21 @@ func (accessLog *AccessLog) LogTimeString() string {
 	return string(strings)
 }
 
+func (accessLog *AccessLog) LogTimeMinString() string {
+	strings := []uint8{}
+	strings = append(strings, accessLog.Year...)
+	strings = append(strings, "-"...)
+	strings = append(strings, accessLog.Month...)
+	strings = append(strings, "-"...)
+	strings = append(strings, accessLog.Day...)
+	strings = append(strings, " "...)
+	strings = append(strings, accessLog.Hour...)
+	strings = append(strings, ":"...)
+	strings = append(strings, accessLog.Min...)
+
+	return string(strings)
+}
+
 func ReadLogLines(filename string) []string {
 	lines := []string{}
 	data, err := ioutil.ReadFile(filename)
@@ -128,6 +144,96 @@ func GetLog(line string) AccessLog {
 		accessLog.Month = fields[20]
 		accessLog.RequestLen = fields[21]
 		accessLog.ServerPort = fields[22]
+	}
+	return accessLog
+}
+
+func GetLogNginx(line string) AccessLog {
+	monthMap := map[string]string{"Jan": "1", "Feb": "2", "Mar": "3", "Apr": "4", "May": "5", "Jun": "6", "Jul": "7", "Aug": "8", "Sep": "9", "Oct": "10", "Nov": "11", "Dec": "12"}
+	pattern := `(\d+\.\d+|\-)` +
+		`\s` +
+		`(\d+\.\d+|\-)` +
+		`\s` +
+		`(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})` +
+		`\s` +
+		`(\d+)` +
+		`\s` +
+		`(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|\-)(:(\d{1,5}))?` +
+		`\s+` +
+		`\[(\d{2})\/` +
+		`([A-Z][a-z]{2}?)\/` +
+		`(\d{4})\:` +
+		`(\d{2})\:` +
+		`(\d{2})\:` +
+		`(\d{2})` +
+		`\s+\+0800\]` +
+		`\s` +
+		`([^\s]+?)` +
+		`\s` +
+		`"` +
+		`([A-Z]+)` +
+		`\s` +
+		`([^\s]+?)` +
+		`\s` +
+		`HTTP/[0-9.]+` +
+		`"` +
+		`\s` +
+		`(\d{3})` +
+		`\s` +
+		`(\d+)` +
+		`\s` +
+		`"` +
+		`([^\"]+|\-)` +
+		`"` +
+		`\s` +
+		`"([^\"]+|\-)"` +
+		`\s` +
+		`"([^\"]+|\-)"` +
+		`\s` +
+		`"([^\"]+|\-)"` +
+		`\s` +
+		`-` +
+		`\s` +
+		`"` +
+		`(` +
+		`(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})` +
+		`(:` +
+		`(\d+)?` +
+		`|\-)` +
+		`\s?` +
+		`(.+?))?` +
+		`"` +
+		`.*`
+
+	myRegexp, _ := regexp.Compile(pattern)
+
+	var accessLog AccessLog
+	if line != "" {
+		fields := myRegexp.FindSubmatch([]byte(line))
+		accessLog.Hour = string(fields[11])
+		accessLog.Year = string(fields[10])
+		accessLog.Day = string(fields[8])
+
+		accessLog.Min = string(fields[12])
+		accessLog.RequestTime = string(fields[1])
+		accessLog.UpstreamResponseTime = string(fields[2])
+		accessLog.RemoteAddr = string(fields[3])
+		accessLog.UpstreamAddr = string(fields[5])
+		accessLog.Hostname = string(fields[14])
+		accessLog.Method = string(fields[15])
+		accessLog.RequestURI = string(fields[16])
+		accessLog.HttpCode = string(fields[17])
+		accessLog.BytesSent = string(fields[18])
+		accessLog.Referer = string(fields[19])
+		accessLog.UserAgent = string(fields[20])
+		accessLog.GzipRatio = string(fields[21])
+		accessLog.HttpXForwardedFor = string(fields[22])
+		accessLog.ServerAddr = string(fields[24])
+		accessLog.GUID = string(fields[27])
+		accessLog.Sec = string(fields[13])
+		accessLog.Month = monthMap[string(fields[9])]
+		accessLog.RequestLen = string(fields[4])
+		accessLog.ServerPort = string(fields[26])
 	}
 	return accessLog
 }
