@@ -89,6 +89,9 @@ There is three main method
 ## Section 4: Our implement
 
 --------------------------------------------
+
+![](doc/image/implement.png) 
+
 + update dot files
 + reason of each rule
 ###4.1 Rules
