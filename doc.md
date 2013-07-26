@@ -3,7 +3,6 @@ HOLMES
 --------------------------------------
 ## Section 1: Background
 
-----------
 ### 1.1 Web Traffic
 
 There is Three main **Web Traffic** nowadays.
@@ -44,7 +43,6 @@ As for User, they can classify into two type
 
 ## Section 2: Input & Output
 
----------------------------
 ### 2.1 Format
 
 Our method is to analyse the **Access Log**.
@@ -66,7 +64,6 @@ That means:
 
 ## Section 3: How
 
-------------------------------------------
 There is three main method
 
 + Syntactic log analysis
@@ -88,9 +85,6 @@ There is three main method
 
 ## Section 4: Our implement
 
---------------------------------------------
-+ update dot files
-+ reason of each rule
 ###4.1 Rules
 
 ####4.1.1 recognize user agent string by key words(such as "bot"、"spider")
@@ -102,16 +96,17 @@ Usually，some large legal search engine companies will declare themselves as a 
 In section 4.1.1, a method used to recognize normal web crawlers is described, however, in real world, there are so many web crawlers which do not declare themselves using user agent string which contained key words such as "bot" and "spider". So, on the other hand, we focus on the normal browsers. Compared to web crawler, the amount of normal browser is small, and their user agent string pattern is more stable. So, user agent string pattern can be used to recognize normal browser as they declared. But,wait, some web crawlers also declare them as normal browser. By combine above two rules, a lot of web crawlers can be recognized.
 
 ####4.1.3 recognize specific request by URI pattern
+
 In the access logs, there are many kinds of requests, but only some specific requests will be cared by us. These specific requests can be recognized using some uri patterns. For example, if we care request URI with "/a/b/" as the prefix, we can use regular pattern "^/a/b/" to match specific request URI.
 
 ####4.1.4 recognize OK request by HTTP code 200
-When client send request to server, the server may send response with different HTTP code which is depends on many condition. Among many HTTP code, the HTPP code 200 represents the response is OK. We use HTTP code 200 to recognize OK request.
+
+When client sends request to server, the server may sends response with different HTTP code which is depends on many condition. Among many HTTP code, the HTPP code 200 represents the response is OK. We use HTTP code 200 to recognize OK request.
 
 --------------------------------------------
 
 ## Section 5: Result
 
---------------------------------------------
 + classify tree(total request num   ->    effective click num)
 + compare graph
 + analysis
@@ -120,7 +115,6 @@ When client send request to server, the server may send response with different 
 
 ## Section 6: What is more
 
----------------------------------------------
 + more rule
 + cluster for high speed
 
