@@ -89,6 +89,8 @@ There is three main method
 ## Section 4: Our implement
 
 --------------------------------------------
+
+![](https://github.com/ent-worm/holmes/blob/doc/doc/image/implement.png "implement.png") 
 + update dot files
 + reason of each rule
 ###4.1 Rules
