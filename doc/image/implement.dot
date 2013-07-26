@@ -1,0 +1,70 @@
+digraph G{
+    rankdir = TB 
+    subgraph cluster0{
+        label = "Redis"
+
+        node81 [label = "Raw_Input \n log,[...]"]
+        node85 [label = "Surf History \n IP -> log,[...]"]
+        node82 [label = "WhiteList \n IP,[...]"]
+        node83 [label = "WatchingList \n IP,[...]"]
+        node84 [label = "WL_IP \n IP -> log,[...]"]
+
+        node81 -> node85 -> node82 -> node83[style = invis]
+        node83 -> node84
+        node84 -> node86 [style = invis]
+
+        node86 [label = "Result \n VPPV"]
+    }
+
+    subgraph cluster1{
+        label = "Holmes"
+        rankdir = TB
+
+        node00 [label = "start"  shape = Mdiamond]
+        //node99 [label = "end" shape = Mdiamond]
+        
+        subgraph cluster11{
+            label = "Pre-process"
+            node2 [label = "Get Single Accesslog"]
+            node3 [label = "UserAgent Filter" shape = diamond]
+            node4 [label = "Add Surf History"]
+            node5 [label = "URI Filter" shape = diamond]
+            node6 [label = "Http Code Filter" shape = diamond]
+
+            node00 -> node2 -> node3
+            node81 -> node2
+    
+            node3 -> node4 -> node5 -> node6 
+            
+            node4 -> node85
+
+        }
+
+        node6 -> node7
+        node6 -> node9
+            
+        subgraph cluster12{
+            label = "Count"
+            node7 [label = "WhiteIpList Filter" shape = diamond]
+            node8 [label = "Add WatchingList"]
+            node12 [label = "Add VPPV"]
+
+
+            node82 -> node7
+            node7 -> node8 -> node83
+            node7 -> node12 -> node86
+        }
+
+        subgraph cluster13{
+            label = "Analysis"
+            node9 [label = "JS Request Filter" shape = diamond]
+            node10 [label = "Refer Filter" shape = diamond]
+            node11 [label = "Process Watching List"]
+
+            node9 -> node10 -> node11 -> node86
+            node83 -> node11
+        }
+
+    }
+
+}
