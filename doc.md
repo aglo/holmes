@@ -4,7 +4,6 @@ HOLMES
 --------------------------------------
 ## Section 1: Background
 
-----------
 ### 1.1 Web Traffic
 
 There is Three main **Web Traffic** nowadays.
@@ -45,7 +44,6 @@ As for User, they can classify into two type
 
 ## Section 2: Input & Output
 
----------------------------
 ### 2.1 format
 
 Our method is to analyse the **Access Log**.
@@ -66,7 +64,6 @@ That means:
 
 ## Section 3: How
 
-------------------------------------------
 There is three main method
 
 + Syntactic log analysis
@@ -88,7 +85,6 @@ There is three main method
 
 ## Section 4: Our implement
 
---------------------------------------------
 + update dot files
 + reason of each rule
 ###4.1 Rules
@@ -105,7 +101,6 @@ In section 4.1.1, a method used to recognize normal web crawlers is described, h
 
 ## Section 5: Result
 
---------------------------------------------
 + classify tree(total request num   ->    effective click num)
 + compare graph
 + analysis
@@ -114,7 +109,6 @@ In section 4.1.1, a method used to recognize normal web crawlers is described, h
 
 ## Section 6: What is more
 
----------------------------------------------
 + more rule
 + cluster for high speed
 
