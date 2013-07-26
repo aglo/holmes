@@ -99,7 +99,13 @@ Usually，some large legal search engine companies will declare themselves as a 
 
 ####4.1.2 recognize user agent string by normal user agent string pattern
 
-In section 4.1.1, a method used to recognize normal web crawlers is described, however, in real world, there are so many web crawlers which don't declare themselves using user agent string which contained key words such as "bot" and "spider". So, on the other hand, we focus on the normal browsers. Compared to web crawler, the amount of normal browser is small, and their user agent string pattern is more stable. So, user agent string pattern can be used to recognize normal browser as they declared. But,wait, some web crawlers also declare them as normal browser. By combine above two rules, a lot of web crawlers can be recognized.
+In section 4.1.1, a method used to recognize normal web crawlers is described, however, in real world, there are so many web crawlers which do not declare themselves using user agent string which contained key words such as "bot" and "spider". So, on the other hand, we focus on the normal browsers. Compared to web crawler, the amount of normal browser is small, and their user agent string pattern is more stable. So, user agent string pattern can be used to recognize normal browser as they declared. But,wait, some web crawlers also declare them as normal browser. By combine above two rules, a lot of web crawlers can be recognized.
+
+####4.1.3 recognize specific request by URI pattern
+In the access logs, there are many kinds of requests, but only some specific requests will be cared by us. These specific requests can be recognized using some uri patterns. For example, if we care request URI with "/a/b/" as the prefix, we can use regular pattern "^/a/b/" to match specific request URI.
+
+####4.1.4 recognize OK request by HTTP code 200
+When client send request to server, the server may send response with different HTTP code which is depends on many condition. Among many HTTP code, the HTPP code 200 represents the response is OK. We use HTTP code 200 to recognize OK request.
 
 --------------------------------------------
 
