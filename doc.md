@@ -91,6 +91,15 @@ There is three main method
 --------------------------------------------
 + update dot files
 + reason of each rule
+###4.1 Rules
+
+####4.1.1 recognize user agent string by key words(such as "bot"、"spider")
+
+Usually，some large legal search engine companies will declare themselves as a web crawler by give an user agent string which contain key words such as "bot" and "spider". For example,Google use "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" as one of their web cralwers,and Baidu use "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)" as one of their web crawlers. Based on the above facts,some normal web crawlers can be recognized using key words.
+
+####4.1.2 recognize user agent string by normal user agent string pattern
+
+In section 4.1.1, a method used to recognize normal web crawlers is described, however, in real world, there are so many web crawlers which don't declare themselves using user agent string which contained key words such as "bot" and "spider". So, on the other hand, we focus on the normal browsers. Compared to web crawler, the amount of normal browser is small, and their user agent string pattern is more stable. So, user agent string pattern can be used to recognize normal browser as they declared. But,wait, some web crawlers also declare them as normal browser. By combine above two rules, a lot of web crawlers can be recognized.
 
 --------------------------------------------
 
