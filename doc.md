@@ -127,15 +127,22 @@ So, on the other hand, we focus on the normal browsers. Compared to web crawler,
 
 ![](doc/image/CountTree.png)
 
-+ Pie Graph
- + UA Filter 
+
++ UA Filter 
+
 ![](doc/image/ua.png)
- + HttpCode Filter 
+
++ HttpCode Filter 
+
 ![](doc/image/httpcode.png) 
 ![](doc/image/4xx.png)
- + vppv 
+
++ vppv 
+
 ![](doc/image/vppv.png)
- + Processed 
+
++ Processed 
+
 ![](doc/image/processed.png)
 
 ### Compare Graph
@@ -178,4 +185,5 @@ Currently the result is a little higher than knowing.
 There is still two thing we can do:
  + For those records we think is effective, there might be mang malicious click.
  + For those we kept in the watching list, classify the effective clicks.
+
 ---------------------------------------------
