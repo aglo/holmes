@@ -91,27 +91,47 @@ There is three main method
 
 Usually，some large legal search engine companies will declare themselves as a web crawler by give an user agent string which contain key words such as **bot** and **spider**. 
 
-For example, Google use **Mozilla/5.0 (compatible; Googlebot/2.1; +http ://www.google.com/bot.html)** as one of their web cralwers,and Baidu use **Mozilla/5.0 (compatible; Baiduspider/2.0; +http ://www.baidu.com/search/spider.html)** as one of their web crawlers. Based on the above facts,some normal web crawlers can be recognized using key words.
++ For example
+ + Google: **Mozilla/5.0 (compatible; Googlebot/2.1; +http ://www.google.com/bot.html)** 
+ + Baidu: **Mozilla/5.0 (compatible; Baiduspider/2.0; +http ://www.baidu.com/search/spider.html)** 
+
+Based on the above facts,some normal web crawlers can be recognized using key words.
 
 ### 4.2 recognize web brower by normal user agent string pattern
 
-In section 4.1, a method used to recognize normal web crawlers is described, however, in real world, there are so many web crawlers which do not declare themselves using user agent string which contained key words such as **bot** and **spider**. So, on the other hand, we focus on the normal browsers. Compared to web crawler, the amount of normal browser is small, and their user agent string pattern is more stable. 
+In section 4.1, a method used to recognize normal web crawlers is described, however, in real world, there are so many web crawlers which do not declare themselves using user agent string which contained key words such as **bot** and **spider**. 
 
-For example, one version of Google Chrome web browser use **Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36** as the user agent string. So, user agent string pattern can be used to recognize normal browser as they declared. But,wait, some web crawlers also declare them as normal browser. By combine above two rules, a lot of web crawlers can be recognized.
+So, on the other hand, we focus on the normal browsers. Compared to web crawler, the amount of normal browser is small, and their user agent string pattern is more stable. 
+
++ For example
+ + Google Chrome web browser: **Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36**
+ + So, user agent string pattern can be used to recognize normal browser as they declared. 
+ + But,wait, some web crawlers also declare them as normal browser. By combine above two rules, a lot of web crawlers can be recognized.
 
 ### 4.3 recognize specific request by URI pattern
-Among the access logs, there are many kinds of requests, but only some specific requests will be cared by us. These specific requests can be recognized using some uri patterns. For example, if we care request URI with **/a/b/** as the prefix, we can use regular pattern **^/a/b/** to match specific request URI.
+
++ Among the access logs, there are many kinds of requests, but only some specific requests will be cared by us. 
++ These specific requests can be recognized using some uri patterns. 
++ For example, if we care request URI with **/a/b/** as the prefix, we can use regular pattern **^/a/b/** to match specific request URI.
 
 ### 4.4 recognize OK request by HTTP code 200
-When client send request to server, the server may send response with different HTTP code which is depends on many condition. Among many HTTP code, the HTPP code **200** represents the response is OK. We use HTTP code **200** to recognize OK request.
+
++ When client send request to server, the server may send response with different HTTP code which is depends on many condition. 
++ Among many HTTP code, the HTPP code **200** represents the response is OK. We use HTTP code **200** to recognize OK request.
 
 --------------------------------------------
 
 ## Section 5: Result
 
-### Classify Tree(total request num   ->    effective click num)
+### Classify Tree
 
 ![](doc/image/CountTree.png)
+
++ Pie Graph
+ + UA Filter ![](doc/image/ua.png)
+ + HttpCode Filter ![](doc/image/httpcode.png) ![](doc/image/4xx.png)
+ + vppv ![](doc/image/vppv.png)
+ + Processed ![](doc/image/processed.png)
 
 ### Compare Graph
 

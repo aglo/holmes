@@ -56,18 +56,9 @@ There is three main method(Paper: [Web robot detection techniques: overview and 
  + Bayesian network
  + Hidden Markov model
 
-For more research.
-
 ---------------------------------------
 
-## Deployment
+## Result
 
-Left Blank
-
-----------------------------------------
-
-## Milestone
-
-Left Blank
-
-----------------------------------------
++ [English Version] (doc.md)
++ [Chinese Version] (doc_cn.md)
