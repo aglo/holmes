@@ -128,10 +128,15 @@ So, on the other hand, we focus on the normal browsers. Compared to web crawler,
 ![](doc/image/CountTree.png)
 
 + Pie Graph
- + UA Filter ![](doc/image/ua.png)
- + HttpCode Filter ![](doc/image/httpcode.png) ![](doc/image/4xx.png)
- + vppv ![](doc/image/vppv.png)
- + Processed ![](doc/image/processed.png)
+ + UA Filter 
+![](doc/image/ua.png)
+ + HttpCode Filter 
+![](doc/image/httpcode.png) 
+![](doc/image/4xx.png)
+ + vppv 
+![](doc/image/vppv.png)
+ + Processed 
+![](doc/image/processed.png)
 
 ### Compare Graph
 
@@ -139,16 +144,38 @@ So, on the other hand, we focus on the normal browsers. Compared to web crawler,
 
 ### Analysis
 
++ The result is not stable at the begenning. 
+ + The reason is that we do not have the history of the logs. 
+ + After 1 hour, the result is a little higher than knowing.
+ + The rule is not restrict.
++ One interesting thing is that in the watching list, there is some abvious bad spider.
+ + Totally 11.7w watching list records
+ + Top3: 3.3w, 2.3w, 2.1w
+
 ---------------------------------------------
 
 ## Section 6: What is more
 
-+ more rule
-+ cluster for high speed
-+ ...
++ More Rules
+ + We use s.anjuke as the Rule to add into Whitelist
+ + Bad spider should be banned.
++ Better Algorithm
+ + Watching list records should be analyse by there behavior to determine whether is effective or not.
++ Cluster for high speed
+ + Currently, the speed of Holmes is still limited. We should use cluster to raise the speed of the program.
+
+
++ Other thing
+ + Bad spider and bad human should be banned or challenged.
+ + Protect data and save resource.
 
 ---------------------------------------------
 
 ## Section 7: Conclude
 
+Currently the result is a little higher than knowing.
+
+There is still two thing we can do:
+ + For those records we think is effective, there might be mang malicious click.
+ + For those we kept in the watching list, classify the effective clicks.
 ---------------------------------------------
