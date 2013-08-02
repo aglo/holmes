@@ -55,7 +55,7 @@ title(main="2013-7-22 9:00~13:00")
 dev.off()
 
 # Draw Pie graph (UA)
-png("ua.png",width=800,height=600,units="px",pointsize=16)
+png("ua.png",width=640,height=480,units="px",pointsize=16)
 ans <- c( sum(p_holmes(ua_no_pass)[,2]), sum((p_holmes(ua_pass)[,2])))
 names(ans) <- c("UA no pass" , "UA pass")
 pie(ans,main="UA Filter")
@@ -63,7 +63,7 @@ dev.off()
 
 
 # Draw Pie graph (HTTP CODE)
-png("httpcode.png",width=800,height=600,units="px",pointsize=16)
+png("httpcode.png",width=640,height=480,units="px",pointsize=16)
 ans <- c( sum(p_holmes(code000)[,2]), sum((p_holmes(code200)[,2])) ,
         sum(sum(p_holmes(code301)[,2]) ,sum(p_holmes(code302)[,2])),
         sum(sum(p_holmes(code400)[,2]) ,sum(p_holmes(code403)[,2]) ,sum(p_holmes(code404)[,2]) ,sum(p_holmes(code408)[,2]) ,sum(p_holmes(code499)[,2])),
@@ -73,21 +73,21 @@ pie(ans,main="HTTPCODE Filter")
 dev.off()
 
 # Draw Pie graph ( 4xx )
-png("4xx.png",width=800,height=600,units="px",pointsize=16)
+png("4xx.png",width=640,height=480,units="px",pointsize=16)
 ans <- c(sum(p_holmes(code400)[,2]) ,sum(p_holmes(code403)[,2]) ,sum(p_holmes(code404)[,2]) ,sum(p_holmes(code408)[,2]) ,sum(p_holmes(code499)[,2]))
 names(ans) <- c("400" , "403" , "404" , "408" , "499")
 pie(ans,main="HTTPCODE = 4xx")
 dev.off()
 
 # Draw Pie graph ( vppv )
-png("vppv.png",width=800,height=600,units="px",pointsize=16)
+png("vppv.png",width=640,height=480,units="px",pointsize=16)
 ans <- c(sum(p_holmes(watching)[,2]) , sum ( sum(p_holmes(effective)[,2]) , sum(p_holmes(from_my)[,2]) , sum(p_holmes(no_referer)[,2])))
 names(ans) <- c("watching list","processed")
 pie(ans ,main = "Analysis")
 dev.off()
 
 # Draw Pie graph ( Processed )
-png("processed.png",width=800,height=600,units="px",pointsize=16)
+png("processed.png",width=640,height=480,units="px",pointsize=16)
 ans <- c(sum(p_holmes(effective)[,2]) , sum(p_holmes(from_my)[,2]) , sum(p_holmes(no_referer)[,2]))
 names(ans) <- c("Effective Click" , "From my.anjuke" , "No Referer")
 pie(ans , main = "Processed")
