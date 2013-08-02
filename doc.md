@@ -115,6 +115,8 @@ When client send request to server, the server may send response with different 
 
 ### Compare Graph
 
+![](doc/image/result.png)
+
 ### Analysis
 
 ---------------------------------------------
