@@ -164,23 +164,25 @@ So, on the other hand, we focus on the normal browsers. Compared to web crawler,
 ## Section 6: What is more
 
 + More Rules
- + We use s.anjuke as the Rule to add into Whitelist
- + Bad spider should be banned.
+ + We use s.anjuke as the Rule to add into Whitelist, it is too restrict
+ + In process, we only use referer filter, it is too loose
 + Better Algorithm
  + Watching list records should be analyse by there behavior to determine whether is effective or not.
 + Cluster for high speed
  + Currently, the speed of Holmes is still limited. We should use cluster to raise the speed of the program.
-
-
 + Other thing
  + Bad spider and bad human should be banned or challenged.
- + Protect data and save resource.
+ + Bad spider should be banned, for protecting data and saving resource.
 
 ---------------------------------------------
 
 ## Section 7: Conclude
 
 Currently the result is a little higher than knowing.
+
+Probably reason:
+ + The javascript code may not work properly.
+ + Our data is the complete record.
 
 There is still two thing we can do:
  + For those records we think is effective, there might be mang malicious click.
