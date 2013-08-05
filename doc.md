@@ -91,42 +91,99 @@ There is three main method
 
 Usually，some large legal search engine companies will declare themselves as a web crawler by give an user agent string which contain key words such as **bot** and **spider**. 
 
-For example, Google use **Mozilla/5.0 (compatible; Googlebot/2.1; +http ://www.google.com/bot.html)** as one of their web cralwers,and Baidu use **Mozilla/5.0 (compatible; Baiduspider/2.0; +http ://www.baidu.com/search/spider.html)** as one of their web crawlers. Based on the above facts,some normal web crawlers can be recognized using key words.
++ For example
+ + Google: **Mozilla/5.0 (compatible; Googlebot/2.1; +http ://www.google.com/bot.html)** 
+ + Baidu: **Mozilla/5.0 (compatible; Baiduspider/2.0; +http ://www.baidu.com/search/spider.html)** 
+
+Based on the above facts,some normal web crawlers can be recognized using key words.
 
 ### 4.2 recognize web brower by normal user agent string pattern
 
-In section 4.1, a method used to recognize normal web crawlers is described, however, in real world, there are so many web crawlers which do not declare themselves using user agent string which contained key words such as **bot** and **spider**. So, on the other hand, we focus on the normal browsers. Compared to web crawler, the amount of normal browser is small, and their user agent string pattern is more stable. 
+In section 4.1, a method used to recognize normal web crawlers is described, however, in real world, there are so many web crawlers which do not declare themselves using user agent string which contained key words such as **bot** and **spider**. 
 
-For example, one version of Google Chrome web browser use **Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36** as the user agent string. So, user agent string pattern can be used to recognize normal browser as they declared. But,wait, some web crawlers also declare them as normal browser. By combine above two rules, a lot of web crawlers can be recognized.
+So, on the other hand, we focus on the normal browsers. Compared to web crawler, the amount of normal browser is small, and their user agent string pattern is more stable. 
+
++ For example
+ + Google Chrome web browser: **Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36**
+ + So, user agent string pattern can be used to recognize normal browser as they declared. 
+ + But,wait, some web crawlers also declare them as normal browser. By combine above two rules, a lot of web crawlers can be recognized.
 
 ### 4.3 recognize specific request by URI pattern
-Among the access logs, there are many kinds of requests, but only some specific requests will be cared by us. These specific requests can be recognized using some uri patterns. For example, if we care request URI with **/a/b/** as the prefix, we can use regular pattern **^/a/b/** to match specific request URI.
+
++ Among the access logs, there are many kinds of requests, but only some specific requests will be cared by us. 
++ These specific requests can be recognized using some uri patterns. 
++ For example, if we care request URI with **/a/b/** as the prefix, we can use regular pattern **^/a/b/** to match specific request URI.
 
 ### 4.4 recognize OK request by HTTP code 200
-When client send request to server, the server may send response with different HTTP code which is depends on many condition. Among many HTTP code, the HTPP code **200** represents the response is OK. We use HTTP code **200** to recognize OK request.
+
++ When client send request to server, the server may send response with different HTTP code which is depends on many condition. 
++ Among many HTTP code, the HTPP code **200** represents the response is OK. We use HTTP code **200** to recognize OK request.
 
 --------------------------------------------
 
 ## Section 5: Result
 
-### Classify Tree(total request num   ->    effective click num)
+### Classify Tree
 
 ![](doc/image/CountTree.png)
 
+
++ UA Filter 
+
+![](doc/image/ua.png)
+
++ HttpCode Filter 
+
+![](doc/image/httpcode.png) 
+![](doc/image/4xx.png)
+
++ vppv 
+
+![](doc/image/vppv.png)
+
++ Processed 
+
+![](doc/image/processed.png)
+
 ### Compare Graph
 
+![](doc/image/result.png)
+
 ### Analysis
+
++ The result is not stable at the begenning. 
+ + The reason is that we do not have the history of the logs. 
+ + After 1 hour, the result is a little higher than knowing.
+ + The rule is not restrict.
++ One interesting thing is that in the watching list, there is some abvious bad spider.
+ + Totally 11.7w watching list records
+ + Top3: 3.3w, 2.3w, 2.1w
 
 ---------------------------------------------
 
 ## Section 6: What is more
 
-+ more rule
-+ cluster for high speed
-+ ...
++ More Rules
+ + We use s.anjuke as the Rule to add into Whitelist
+ + Bad spider should be banned.
++ Better Algorithm
+ + Watching list records should be analyse by there behavior to determine whether is effective or not.
++ Cluster for high speed
+ + Currently, the speed of Holmes is still limited. We should use cluster to raise the speed of the program.
+
+
++ Other thing
+ + Bad spider and bad human should be banned or challenged.
+ + Protect data and save resource.
 
 ---------------------------------------------
 
 ## Section 7: Conclude
+
+Currently the result is a little higher than knowing.
+
+There is still two thing we can do:
+ + For those records we think is effective, there might be mang malicious click.
+ + For those we kept in the watching list, classify the effective clicks.
 
 ---------------------------------------------

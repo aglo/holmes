@@ -1,0 +1,18 @@
+digraph G{
+
+    "Total requests (27,443,635)" -> "Robots (6,559,384)" 
+    "Total requests (27,443,635)" -> "Others (20,884,251)"
+    "Others (20,884,251)" -> "Total /prop/view (410,685)"
+    "Total /prop/view (410,685)" -> "Http code 200 (361,190)"
+    "Total /prop/view (410,685)" -> "503 (33,944)"
+    "Total /prop/view (410,685)" -> "301 (10,782)"
+    "Total /prop/view (410,685)" -> "302 (3,742)"
+
+    "Http code 200 (361,190)" -> "Effective (229,116)"
+    "Http code 200 (361,190)" -> "Watching List (118,654)"
+    "Http code 200 (361,190)" -> "No refer"
+
+    "Watching List (118,654)" -> "IP Count more than 100 (>100,000)"
+    "Watching List (118,654)" -> "IP Count equal 1 (<1000)"
+
+}
